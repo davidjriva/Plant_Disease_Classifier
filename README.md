@@ -105,3 +105,30 @@ Tomato early blight
   Our project has overall faced several challenges, such as the lack of deep learning models available in PySpark, group leakage within our initial dataset, and challenges with Spark’s image capabilities. We addressed the first issue by splitting our workflow into two domains: data preparation and modeling. Spark was applied to the first and Keras to the second. We addressed the group leakage problem by evaluating two dataset partitioning schemes — one stratified and one grouped—to empirically evaluate the impact of a leak, finding it negligible. Finally, we worked around Spark’s limitations regarding processing and saving images by keeping only the augmentation distributed while collecting all results on a driver node for saving to disk. We found creative ways to overcome these obstacles and learned a great deal about how the fields of machine learning and Big Data overlap in powerful and promising ways. 
 	Overall, our experiment indicates that we have created a novel and useful approach to the classification and identification of plant diseases in crops. We have demonstrated that a model trained only on "idealized" leaf images does not generalize well to images augmented with occlusions featuring virtual rain and mud. Concurrently, our results indicate that the architecture of VGG16 can handle the complexity introduced by said augmentations without degrading performance on the pre-existing dataset. We believe, but cannot assert, that our occlusions mimic some of the diversity of agricultural settings exposed to the environment. As a consequence, we submit that in order to further our stated goal of developing a robust solution for proactive disease control in diverse agricultural environments, it is warranted to invest in collecting additional ground truth data that is less "ideally" staged in order to establish the correlation between realistic field data and augmentations of idealized images. Future works in this line of research may consider the applications of these models onto satellite or aerial imagery to allow the application of our model onto larger plots of lands. Additionally, we should consider applying this model to real examples of plant diseases from farms across the United States with a variety of conditions. Other augmentations, like different lighting, may be required to further improve our modeling process. This problem remains a significant issue faced by agriculturalists, but we have brought the scientific community one step closer to a solution by our research. 
 
+## Works Cited(APA)
+Albumentations-Team. (n.d.). Albumentations-Team/Albumentations: Fast Image Augmentation Library and an easy-to-use wrapper around other libraries. documentation: Https://albumentations.ai/docs/ paper about the library: Https://www.mdpi.com/2078-2489/11/2/125. GitHub.
+https://github.com/albumentations-team/albumentations
+
+Ayotte, Blaine, Banavar, Mahesh K., Hou, Daqing, & Schuckers, Stephanie. Group Leakage Overestimates Performance: A Case Study in Keystroke Dynamics. 2021 IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW), (). Retrieved from https://par.nsf.gov/biblio/10318822. https://doi.org/10.1109/CVPRW53098.2021.00156
+Bhattarai, S. (2018, November 18). New Plant Diseases Dataset. Kaggle. https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset/data
+
+Distributed training with tensorflow : Tensorflow Core. TensorFlow. (n.d.). https://www.tensorflow.org/guide/distributed_training
+
+Gula, L. (n.d.). Researchers helping protect crops from pests. National Institute of Food and Agriculture. https://www.nifa.usda.gov/about-nifa/blogs/researchers-helping-protect-crops-pests#:~:text =Each%20year%2C%20plant%20diseases%20cost,constraint%20on%20global%20food% 20production.
+
+J. Deng, W. Dong, R. Socher, L. -J. Li, Kai Li and Li Fei-Fei, "ImageNet: A large-scale hierarchical image database," 2009 IEEE Conference on Computer Vision and Pattern Recognition, Miami, FL, USA, 2009, pp. 248-255, doi: 10.1109/CVPR.2009.5206848.
+
+Gula, L. T. (2023, June 6). Researchers helping protect crops from pests. National Institute of Food and Agriculture. http://www.nifa.usda.gov/about-nifa/blogs/researchers-helping-protect-crops-pests
+
+Howard, A., Sandler, M., Chu, G., Chen, L.-C., Chen, B., Tan, M., Wang, W., Zhu, Y., Pang, R., Vasudevan, V., Le, Q. V., & Adam, H. (2019, November 20). Searching for MobileNetV3. arXiv.org. https://arxiv.org/abs/1905.02244
+Hughes, David. P., & Salathe, M. (2016, April 12). An open access repository of images on plant health to enable the development of Mobile Disease Diagnostics. arXiv.org. https://arxiv.org/abs/1511.08060
+
+Saleem, M. H., Potgieter, J., & Arif, K. M. (2019, October 31). Plant disease detection and classification by Deep Learning. MDPI. https://www.mdpi.com/2223-7747/8/11/468
+
+spMohanty. (n.d.). SpMohanty/PlantVillage-Dataset: Dataset of diseased plant leaf images and corresponding labels. GitHub. https://github.com/spMohanty/PlantVillage-Dataset
+Tan, M., & Le, Q. V. (2021, June 23).
+
+Simonyan, K., & Zisserman, A. (2014). Very deep convolutional networks for large-scale
+image recognition. arXiv preprint arXiv:1409.1556.
+Timmerman, A., Nygren, A., VanDeWalle, B., Giesler, L., Seymour, R., Glewen, K., Shapiro, C., Jhala, A., & Treptow, D. (2019, January 28). Plant disease: Pathogens and cycles. CropWatch. https://cropwatch.unl.edu/soybean-management/plant-disease
+
