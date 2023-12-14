@@ -24,7 +24,7 @@ The original dataset is accessible on Kaggle via the following hyperlink: Kaggle
 
 
 Figure 1: Healthy vs. Diseased Distribution Across Original Dataset
-[Figure 1](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_1.png)
+![Figure 1](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_1.png)
 
 
 
