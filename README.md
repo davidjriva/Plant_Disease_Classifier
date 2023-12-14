@@ -24,31 +24,10 @@ The original dataset is accessible on Kaggle via the following hyperlink: Kaggle
 
 
 Figure 1: Healthy vs. Diseased Distribution Across Original Dataset
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![Figure 1](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_1.png)
 
 Figure 2: Distribution of Images Per Class
-
+![Figure 2](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_2.png)
 
 
 According to Figure 1, there are roughly twice as many diseased classes as healthy classes because for a single plant, there is only one possible classification of healthy, while many diseases could plague the plant. This was beneficial to our modeling process as it ensured that we were able to discern between several diseases occuring in the same plant, which may look very similar. Figure 2 confirms that there is roughly an equal distribution of examples per class with the lowest amount being 1,750 examples and the highest being 2,000 examples. The only missing images to consider are 5 plant species (Blueberry, Orange, Raspberry, Soybean, Squash) that each have either a healthy or diseased set, but not both. We’ve chosen to exclude these species entirely from our experiment because evaluating our model on them doesn’t offer a clear way to achieve our primary objective: identifying diseased plants using healthy and diseased training examples.
@@ -62,10 +41,12 @@ We present the overall distribution of the percentage of augmented samples per c
 
 
 Figure 3: Distribution of raw (unaugmented) images per class in the original dataset
+![Figure 3](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_3.png)
 
 After a manual review of each augmentation type, we concluded that they effectively address diverse leaf orientation and lighting conditions but not the common environmental occlusions that one might expect in the field, such as by water or dirt. As a result, we generated two additional copies of the dataset, one with rain and one with mud spatter augmentation. We performed this data preprocessing using PySpark to load the images and distribute them across the cluster to be manipulated by the Albumentations library. We present examples of our augmentations in Figure 4. After transformation, the images and a manifest dataframe were collected and written to disk on the driver node. The purpose of this manifest dataframe is to serve as an in-memory forward index mapping file paths to metadata, such as the class, source image, and augmentations performed on the image. This manifest afforded us speed and flexibility in specifying varied data partitioning schemes for our modeling experiments described in the following section.
 
 Figure 4: Example of mud and rain spatter augmentation
+![Figure 4](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_4.png)
 
 ##  Discussion and analysis
 
@@ -77,29 +58,28 @@ When comparing the models trained with grouped or not grouped splits, there were
 However, the model trained using the grouped original data exhibits better accuracy and recall in testing with the original grouped test set, outperforming its ungrouped counterpart by nearly 5%. This difference, bolded in Figure 5, is contrary to our expectations because grouping the images by source was anticipated to potentially increase the difficulty of the problem, not improve performance. One reason that might explain this surprise improvement is the distribution of classes that resulted from the group partitioning. Since we split on source image groups without stratification, the expected distribution of classes would be similar to the distribution visualized in Figure 3. It’s plausible that this new class distribution simplified the problem for the model enough to impact results at a macro averaged level. Note that any such influence is not tangible when considering the addition of our augmentations, possibly getting overshadowed by the tripling in dataset size. Consequently, we opted to stick with stratified partitioning for our augmentations experiment.
 
 Figure 5: Classification metrics for VGG16 on unaugmented vs augmented datasets with same-source images grouped. Differences (grouped minus not grouped) from Figure 6 shown in parenthesis.
+![Figure 5](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_5.png)
 
 ### Occlusion Augmentation Experiment
 
   To evaluate the impact of our environmental occlusion augmentations on model robustness, we compared two models: one trained solely on the original dataset including pre-existing augmentations and another trained on the entirety of our data—original images and augmented ones featuring mud spatter or rain spatter. For evaluation, we created four distinct testing sets: one comprising only normal images, another combining normal and augmented images, a third containing solely mud spatter images, and a fourth containing only rain spatter images. The separation of mud spatter and rain spatter images aimed to gauge if the original model struggled with both or just one of these augmentations. Results are provided in Figure 6.
 
 Figure 6: Classification metrics for VGG16 on unaugmented vs augmented datasets
-
+![Figure 6](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_6.png)
 
   The model solely trained on original images performed well on the original image test set, scoring an accuracy of 91.12%. However, its performance dropped to 65.05% on the normal and augmented images. Furthermore, it achieved 49.68% accuracy on the rain spatter images and 54.52% on the mud spatter images. This demonstrated that our initial model lacked the adaptability to generalize effectively in agricultural settings where the model would likely encounter dirt or water on the leaves, indicating the need for improved robustness. Additionally, it struggled similarly on both the mud spatter and rain spatter images, indicating consistent difficulty with these alterations.
 	Conversely, the model trained on original and augmented images(mud and rain spatter) performed better across the board. It performed well on the original test set getting around 93% accuracy, better than the model trained only on the original images by almost two percentage points. Additionally, it saw around 92% accuracy on the other test sets, supporting our hypothesis that the addition of augmented images would lead to a more robust model, capable of identifying plant diseases in the field. 
 
 Figure 7: Original Model Confusion Matrix with Augmented + Original Test Set
+![Figure 7](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_7.png)
 
 Figure 8:  Augmented Model Confusion Matrix with Augmented + Original Test Set
+![Figure 8](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_8.png)
 	
 To further understand our model’s performance, we calculated the per class accuracy, precision, recall, and F1-scores. While assessing the model trained on the original dataset with augmented images, we noticed consistent mispredictions across various classes, specifically strawberry leaf scorch and tomato early blight (Figure 7). This discrepancy likely stems from the specks present in these specific plant diseases, resembling the mud spatter augmentations introduced during the image augmentations. However, the model trained on augmented data is far more resilient to these misclassifications and overall does a better job of correctly classifying the plant diseases. Despite this, the model struggles with tomato early blight, often misidentifying it as tomato late blight (Figure 8). Additionally, it encounters challenges with two other tomato diseases, leaf mold and septoria leaf spot, where the model trained on the original data performed notably better (Figure 9). This further underscores the intricate nature of our dataset and the complexities involved in accurately classifying various plant diseases.
 
 Figure 9: Commonly Misclassified Plant Diseases 
-
-
-Tomato target spot with mud spatter augmentation
-Strawberry leaf scorch
-Tomato early blight
+![Figure 9](https://github.com/davidjriva/Plant_Disease_Classifier/blob/main/README_Images/Figure_9.png)
 
 ## Conclusion
   Our project has overall faced several challenges, such as the lack of deep learning models available in PySpark, group leakage within our initial dataset, and challenges with Spark’s image capabilities. We addressed the first issue by splitting our workflow into two domains: data preparation and modeling. Spark was applied to the first and Keras to the second. We addressed the group leakage problem by evaluating two dataset partitioning schemes — one stratified and one grouped—to empirically evaluate the impact of a leak, finding it negligible. Finally, we worked around Spark’s limitations regarding processing and saving images by keeping only the augmentation distributed while collecting all results on a driver node for saving to disk. We found creative ways to overcome these obstacles and learned a great deal about how the fields of machine learning and Big Data overlap in powerful and promising ways. 
